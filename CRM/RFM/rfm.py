@@ -13,6 +13,7 @@ df.dropna(inplace=True)
 # Faturalardaki ‘C’ iptal edilen işlemleri göstermektedir. İptal edilen işlemleri veri setinden çıkartınız.
 df = df[~df['Invoice'].str.contains('C', na=False)]
 
+# Quantity and Price features
 df = df[(df['Quantity'] > 0)]
 df = df[(df['Price'] > 0)]
 
