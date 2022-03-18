@@ -1,15 +1,3 @@
-####################################
-# Customer Segmentation with K-Means
-####################################
-# İş Problemi
-# Kural tabanlı müşteri segmentasyonu yöntemi RFM ile makine öğrenmesi yöntemi
-# olan K-Means'in müşteri segmentasyonu için karşılaştırılması beklenmektedir.
-####################################
-# GÖREV
-# RFM metriklerine göre (skorlar değil) K-Means'i kullanarak müşteri segmentasyonu yapınız.
-# Dilerseniz RFM metriklerinden başka metrikler de üretebilir ve bunları da
-# kümeleme için kullanabilirsiniz
-####################################
 import datetime as dt
 import pandas as pd
 import matplotlib.pyplot as plt
