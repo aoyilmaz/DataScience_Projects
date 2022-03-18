@@ -1,6 +1,5 @@
 import datetime as dt
 import pandas as pd
-import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import MinMaxScaler
 from yellowbrick.cluster import KElbowVisualizer
@@ -8,21 +7,22 @@ from yellowbrick.cluster import KElbowVisualizer
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 
-df_ = pd.read_excel('Week3/Ödevler/online_retail_II.xlsx', sheet_name='Year 2010-2011')
-df = df_.copy()
+df = pd.read_excel('/home/kan/Workspace/DSMLBC7/Week3/Odevler/online_retail_II.xlsx', sheet_name='Year 2010-2011')
 
-df.shape
 df.isnull().sum()
 df.dropna(inplace=True)
 df = df[~df['Invoice'].str.contains('C', na=False)]
+df = df[(df['Quantity'] > 0)]
+df = df[(df['Price'] > 0)]
+
 df['TotalPrice'] = df['Quantity'] * df['Price']
 
 rfm = df.groupby('Customer ID').agg({
                               'InvoiceDate': lambda InvoiceDate: (dt.datetime(2011, 12, 11) - InvoiceDate.max()).days,
                               'Invoice': lambda Invoice: Invoice.nunique(),
                               'TotalPrice': lambda TotalPrice: TotalPrice.sum()})
+
 rfm.columns = ['recency', 'frequency', 'monetary']
-rfm = rfm[rfm['monetary'] > 0]
 
 rfm_ = rfm.copy()
 sc = MinMaxScaler((0, 1))
@@ -45,11 +45,11 @@ elbow.elbow_value_
 
 kmeans = KMeans(n_clusters=elbow.elbow_value_).fit(rfm)
 kumeler = kmeans.labels_
-pd.DataFrame({"Eyaletler": rfm.index, "Kumeler": kumeler})
-df["cluster_no"] = kumeler
-df["cluster_no"] = df["cluster_no"] + 1
+pd.DataFrame({"Müşteriler": rfm_.index, "Kumeler": kumeler})
+rfm_["cluster_no"] = kumeler
+rfm_["cluster_no"] = rfm_["cluster_no"] + 1
 
-df.head()
+rfm_.head()
 
 
 
