@@ -7,15 +7,16 @@ from yellowbrick.cluster import KElbowVisualizer
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 
-df = pd.read_excel('/home/kan/Workspace/DSMLBC7/Week3/Odevler/online_retail_II.xlsx', sheet_name='Year 2010-2011')
+df = pd.read_csv('/home/kan/Workspace/DataScience_Projects/CRM/Cohort_Analysis/Year 2010-2011.csv', encoding='ISO-8859-1')
 
-df.isnull().sum()
+
 df.dropna(inplace=True)
 df = df[~df['Invoice'].str.contains('C', na=False)]
 df = df[(df['Quantity'] > 0)]
 df = df[(df['Price'] > 0)]
 
 df['TotalPrice'] = df['Quantity'] * df['Price']
+df['InvoiceDate'] = pd.to_datetime(df['InvoiceDate'], format='%m/%d/%Y %H:%M')
 
 rfm = df.groupby('Customer ID').agg({
                               'InvoiceDate': lambda InvoiceDate: (dt.datetime(2011, 12, 11) - InvoiceDate.max()).days,
@@ -24,9 +25,8 @@ rfm = df.groupby('Customer ID').agg({
 
 rfm.columns = ['recency', 'frequency', 'monetary']
 
-rfm_ = rfm.copy()
 sc = MinMaxScaler((0, 1))
-rfm = sc.fit_transform(rfm_)
+rfm_ = sc.fit_transform(rfm)
 
 kmeans = KMeans(n_clusters=4)
 k_fit = kmeans.fit(rfm_)
@@ -38,16 +38,15 @@ k_fit.inertia_  # sse
 
 kmeans = KMeans()
 elbow = KElbowVisualizer(kmeans, k=(2, 20))
-elbow.fit(rfm)
+elbow.fit(rfm_)
 elbow.show()
 
 elbow.elbow_value_
 
 kmeans = KMeans(n_clusters=elbow.elbow_value_).fit(rfm)
-kumeler = kmeans.labels_
-pd.DataFrame({"Müşteriler": rfm_.index, "Kumeler": kumeler})
-rfm_["cluster_no"] = kumeler
-rfm_["cluster_no"] = rfm_["cluster_no"] + 1
+cluster = kmeans.labels_
+rfm["cluster_no"] = cluster
+rfm["cluster_no"] = rfm["cluster_no"] + 1
 
 rfm_.head()
 
