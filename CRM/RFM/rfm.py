@@ -49,3 +49,4 @@ seg_map = {
 rfm['segment'] = rfm['RFM_SCORE'].replace(seg_map, regex=True)
 rfm = rfm[["recency", "frequency", "monetary", "segment"]]
 rfm.head()
+
